@@ -1,0 +1,33 @@
+{
+  "name": "poc-up-bank-cli",
+  "version": "0.0.1",
+  "description": "",
+  "author": "Glenn 'devalias' Grant (https://devalias.net/)",
+  "license": "MIT",
+  "homepage": "https://github.com/0xdevalias/poc-up-bank-cli#readme",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/0xdevalias/poc-up-bank-cli.git"
+  },
+  "bugs": {
+    "url": "https://github.com/0xdevalias/poc-up-bank-cli/issues"
+  },
+  "type": "module",
+  "main": "up-bank-cli.ts",
+  "scripts": {
+    "start": "tsx up-bank-cli.ts",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "date-fns": "^2.30.0",
+    "dotenv": "^16.1.1",
+    "node-fetch": "^3.3.1",
+    "yargs": "^17.7.2"
+  },
+  "devDependencies": {
+    "@types/node-fetch": "^2.6.4",
+    "@types/yargs": "^17.0.24",
+    "prettier": "^2.8.8",
+    "tsx": "^3.12.7"
+  }
+}
