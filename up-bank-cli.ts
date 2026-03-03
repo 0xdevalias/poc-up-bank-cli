@@ -145,6 +145,7 @@ type FetchTransactionsArgs = {
   until?: string;
   category?: string;
   tag?: string;
+  accountId?: string;
 };
 
 interface PaginationOptions {
@@ -156,11 +157,15 @@ interface PaginationOptions {
 // TODO: should we pass config into this function, or just read it from the global config variable?
 // TODO: what is a clean pattern for passing the pagination options into this function, and through to the underlying function?
 async function fetchTransactions(
-  { size, status, since, until, category, tag }: FetchTransactionsArgs,
+  { size, status, since, until, category, tag, accountId }: FetchTransactionsArgs,
   paginationOptions: PaginationOptions = {}
 ) {
+  const endpoint = accountId
+    ? `/accounts/${accountId}/transactions`
+    : "/transactions";
+
   const fetchedTransactionsPaginator = await fetchUpWithAuth(
-    "/transactions",
+    endpoint,
     {
       "page[size]": size,
       "filter[status]": status,
@@ -281,9 +286,15 @@ await yargs(hideBin(process.argv))
   })
   .command(
     "transactions",
-    "Retrieve a list of all transactions across all accounts for the currently authenticated user. The returned list is paginated and can be scrolled by following the next and prev links where present. To narrow the results to a specific date range pass one or both of filter[since] and filter[until] in the query string. These filter parameters should not be used for pagination. Results are ordered newest first to oldest last.\n\nDocs: https://developer.up.com.au/#get_transactions",
+    "Retrieve a list of transactions for the currently authenticated user. By default this returns transactions across all accounts, or use --account-id to scope results to a specific account UUID. The returned list is paginated and can be scrolled by following the next and prev links where present. To narrow the results to a specific date range pass one or both of filter[since] and filter[until] in the query string. These filter parameters should not be used for pagination. Results are ordered newest first to oldest last.\n\nDocs: https://developer.up.com.au/#get_transactions",
     (yargs) => {
       return yargs
+        .option("account-id", {
+          describe:
+            "Filter transactions to a specific account UUID using /accounts/{accountId}/transactions",
+          type: "string",
+          group: "Fetch Transactions:",
+        })
         .option("size", {
           // TODO should we move --size into the global'ish paginate options?
           describe: "Page size",

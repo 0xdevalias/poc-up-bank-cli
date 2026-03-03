@@ -18,6 +18,7 @@ up-bank-cli.ts --help
 up-bank-cli.ts --version 
 
 up-bank-cli.ts transactions --since 20210701 --until 20220630 --size 100 --tag Tax --paginate
+up-bank-cli.ts transactions --account-id 00000000-0000-0000-0000-000000000000 --status SETTLED --size 100 --paginate
 
 etc
 ```
@@ -29,18 +30,20 @@ Output from `./up-bank-cli.ts --help`:
 up-bank-cli.ts <command>
 
 Commands:
-  up-bank-cli.ts transactions  Retrieve a list of all transactions across all ac
-                               counts for the currently authenticated user. The
-                               returned list is paginated and can be scrolled by
-                                following the next and prev links where present.
-                                To narrow the results to a specific date range p
-                               ass one or both of filter[since] and filter[until
-                               ] in the query string. These filter parameters sh
-                               ould not be used for pagination. Results are orde
-                               red newest first to oldest last.
+  up-bank-cli.ts transactions  Retrieve a list of transactions for the currently
+                                authenticated user. By default this returns tran
+                               sactions across all accounts, or use --account-id
+                                to scope results to a specific account UUID. The
+                                returned list is paginated and can be scrolled b
+                               y following the next and prev links where present
+                               . To narrow the results to a specific date range
+                               pass one or both of filter[since] and filter[unti
+                               l] in the query string. These filter parameters s
+                               hould not be used for pagination. Results are ord
+                               ered newest first to oldest last.
 
-                               Docs: https://d
-                               eveloper.up.com.au/#get_transactions
+                               Docs: https://
+                               developer.up.com.au/#get_transactions
   up-bank-cli.ts completion    generate completion script
 
 Pagination:
@@ -63,22 +66,26 @@ Output from `./up-bank-cli.ts transactions --help`:
 ⇒ ./up-bank-cli.ts transactions --help
 up-bank-cli.ts transactions
 
-Retrieve a list of all transactions across all accounts for the currently authen
-ticated user. The returned list is paginated and can be scrolled by following th
-e next and prev links where present. To narrow the results to a specific date ra
-nge pass one or both of filter[since] and filter[until] in the query string. The
-se filter parameters should not be used for pagination. Results are ordered newe
-st first to oldest last.
+Retrieve a list of transactions for the currently authenticated user. By default
+ this returns transactions across all accounts, or use --account-id to scope res
+ults to a specific account UUID. The returned list is paginated and can be scrol
+led by following the next and prev links where present. To narrow the results to
+ a specific date range pass one or both of filter[since] and filter[until] in th
+e query string. These filter parameters should not be used for pagination. Resul
+ts are ordered newest first to oldest last.
 
-Docs: https://developer.up.com.au/#get_transactions
+Docs: https://developer.up.com.au/#
+get_transactions
 
 Fetch Transactions:
-      --size      Page size                                             [number]
-      --status    Transaction status                                    [string]
-      --since     Start date (eg. 2020-01-01T01:02:03+10:00)            [string]
-      --until     End date (eg. 2020-02-01T01:02:03+10:00)              [string]
-      --tag       Tag                                                   [string]
-      --category  Category identifier
+      --account-id  Filter transactions to a specific account UUID using /accoun
+                    ts/{accountId}/transactions                         [string]
+      --size        Page size                                           [number]
+      --status      Transaction status                                  [string]
+      --since       Start date (eg. 2020-01-01T01:02:03+10:00)          [string]
+      --until       End date (eg. 2020-02-01T01:02:03+10:00)            [string]
+      --tag         Tag                                                 [string]
+      --category    Category identifier
   [string] [choices: "games-and-software", "car-insurance-and-maintenance", "fam
   ily", "good-life", "groceries", "booze", "clothing-and-accessories", "cycling"
   , "homeware-and-appliances", "personal", "education-and-student-loans", "event
