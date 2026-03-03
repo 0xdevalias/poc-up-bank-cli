@@ -20,8 +20,14 @@ up-bank-cli.ts --version
 up-bank-cli.ts transactions --since 20210701 --until 20220630 --size 100 --tag Tax --paginate
 up-bank-cli.ts transactions --account-id 00000000-0000-0000-0000-000000000000 --status SETTLED --size 100 --paginate
 
+up-bank-cli.ts accounts --account-type SAVER --paginate
+up-bank-cli.ts accounts --account-type SAVER --paginate | jq -r '.[][] | "\(.id)\t\(.attributes.displayName)"'
+
 etc
 ```
+
+Tip: when using `--paginate`, command output is an array of pages, so use `.[][]`
+in `jq` to flatten before filtering/mapping.
 
 Output from `./up-bank-cli.ts --help`:
 
@@ -97,6 +103,38 @@ Fetch Transactions:
   ments", "restaurants-and-cafes", "toll-roads", "utilities", "life-admin", "tak
   eaway", "mobile-phone", "tobacco-and-vaping", "news-magazines-and-books", "tv-
                                               and-music", "adult", "technology"]
+
+Pagination:
+      --paginate     Make additional HTTP requests to fetch all pages of results
+                                                      [boolean] [default: false]
+      --max-pages    Maximum number of pages of results to fetch when using --pa
+                     ginate                                             [number]
+      --max-results  Maximum number of results to fetch when using --paginate
+                                                                        [number]
+
+Options:
+      --debug    Enable debug mode                    [boolean] [default: false]
+      --version  Show version number                                   [boolean]
+  -h, --help     Show help                                             [boolean]
+```
+
+Output from `./up-bank-cli.ts accounts --help`:
+
+```shell
+⇒ ./up-bank-cli.ts accounts --help
+up-bank-cli.ts accounts
+
+Retrieve a list of accounts for the currently authenticated user. The returned l
+ist is paginated and can be scrolled by following the next and prev links where
+present. Results can be filtered by account type and ownership type.
+
+Docs: http
+s://developer.up.com.au/#get_accounts
+
+Fetch Accounts:
+      --size            Page size                                       [number]
+      --account-type    Account type filter (eg. SAVER, TRANSACTIONAL)  [string]
+      --ownership-type  Ownership type filter (eg. INDIVIDUAL, JOINT)   [string]
 
 Pagination:
       --paginate     Make additional HTTP requests to fetch all pages of results

@@ -148,6 +148,12 @@ type FetchTransactionsArgs = {
   accountId?: string;
 };
 
+type FetchAccountsArgs = {
+  size?: number;
+  accountType?: string;
+  ownershipType?: string;
+};
+
 interface PaginationOptions {
   paginate?: boolean;
   maxPages?: number;
@@ -199,6 +205,35 @@ async function fetchTransactions(
   // TODO: probably should add a CLI arg for --pretty or similar and use that here
   // TODO: probably should check this value before trying to use it like this..?
   // const responseJson = JSON.stringify(response.value, null, 2);
+  const responseJson = JSON.stringify(fetchedPages, null, 2);
+  console.log(responseJson);
+}
+
+async function fetchAccounts(
+  { size, accountType, ownershipType }: FetchAccountsArgs,
+  paginationOptions: PaginationOptions = {}
+) {
+  const fetchedAccountsPaginator = await fetchUpWithAuth(
+    "/accounts",
+    {
+      "page[size]": size,
+      "filter[accountType]": accountType,
+      "filter[ownershipType]": ownershipType,
+    },
+    paginationOptions
+  );
+
+  const fetchedPages = [];
+  let fetchedPageCount = 0;
+  for await (const fetchedAccountsPage of fetchedAccountsPaginator) {
+    fetchedPageCount++;
+    fetchedPages.push(fetchedAccountsPage);
+
+    console.error(
+      `Fetched page ${fetchedPageCount} with ${fetchedAccountsPage.length} accounts`
+    );
+  }
+
   const responseJson = JSON.stringify(fetchedPages, null, 2);
   console.log(responseJson);
 }
@@ -333,6 +368,31 @@ await yargs(hideBin(process.argv))
     async (config) => {
       // TODO: we really should improve the parameters and types being passed through here..
       return fetchTransactions(config as any, config as PaginationOptions);
+    }
+  )
+  .command(
+    "accounts",
+    "Retrieve a list of accounts for the currently authenticated user. The returned list is paginated and can be scrolled by following the next and prev links where present. Results can be filtered by account type and ownership type.\n\nDocs: https://developer.up.com.au/#get_accounts",
+    (yargs) => {
+      return yargs
+        .option("size", {
+          describe: "Page size",
+          type: "number",
+          group: "Fetch Accounts:",
+        })
+        .option("account-type", {
+          describe: "Account type filter (eg. SAVER, TRANSACTIONAL)",
+          type: "string",
+          group: "Fetch Accounts:",
+        })
+        .option("ownership-type", {
+          describe: "Ownership type filter (eg. INDIVIDUAL, JOINT)",
+          type: "string",
+          group: "Fetch Accounts:",
+        });
+    },
+    async (config) => {
+      return fetchAccounts(config as any, config as PaginationOptions);
     }
   )
   .option("paginate", {
