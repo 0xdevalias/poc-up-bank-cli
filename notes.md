@@ -206,3 +206,19 @@ jq '
     }
 ' transactions.json
 ```
+
+## Account lookup helpers
+
+List account UUID + display name for SAVER accounts:
+
+```shell
+./up-bank-cli.ts accounts --account-type SAVER --paginate \
+  | jq -r '.[][] | "\(.id)\t\(.attributes.displayName)"'
+```
+
+If you only want JSON on stdout (without progress logs), silence stderr:
+
+```shell
+./up-bank-cli.ts accounts --account-type SAVER --paginate 2>/dev/null \
+  | jq -r '.[][] | "\(.id)\t\(.attributes.displayName)"'
+```
