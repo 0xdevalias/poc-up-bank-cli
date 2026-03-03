@@ -145,5 +145,64 @@ Example transaction object:
     "self": "https://api.up.com.au/api/v1/transactions/TRANSACTION-ID-PLACEHOLDER"
   }
 }
+```
 
+## Interest transaction helpers (`.[][]` paged output)
+
+When using `--paginate`, the CLI currently outputs an array of pages, so use
+`.[][]` to flatten page arrays before filtering transactions.
+
+Extract interest transactions with selected fields:
+
+```shell
+jq '
+  [
+    .[][]
+    | select(
+        (.attributes.transactionType // "" | ascii_downcase) == "interest"
+        or (.attributes.description // "" | ascii_downcase) == "interest"
+      )
+    | {
+        id,
+        settledAt: .attributes.settledAt,
+        amountCents: .attributes.amount.valueInBaseUnits,
+        amount: .attributes.amount.value
+      }
+  ]
+' transactions.json
+```
+
+Sum total interest in cents:
+
+```shell
+jq '
+  [
+    .[][]
+    | select(
+        (.attributes.transactionType // "" | ascii_downcase) == "interest"
+        or (.attributes.description // "" | ascii_downcase) == "interest"
+      )
+    | .attributes.amount.valueInBaseUnits
+  ]
+  | add // 0
+' transactions.json
+```
+
+Count + totals summary:
+
+```shell
+jq '
+  [
+    .[][]
+    | select(
+        (.attributes.transactionType // "" | ascii_downcase) == "interest"
+        or (.attributes.description // "" | ascii_downcase) == "interest"
+      )
+  ] as $txns
+  | {
+      count: ($txns | length),
+      totalCents: ([$txns[].attributes.amount.valueInBaseUnits] | add // 0),
+      totalAUD: (([$txns[].attributes.amount.valueInBaseUnits] | add // 0) / 100)
+    }
+' transactions.json
 ```
